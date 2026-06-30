@@ -1,5 +1,7 @@
 import streamlit as st
 
+from pawpal_system import Owner, Pet, Scheduler, Task
+
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
 
 st.title("🐾 PawPal+")
@@ -46,8 +48,23 @@ species = st.selectbox("Species", ["dog", "cat", "other"])
 st.markdown("### Tasks")
 st.caption("Add a few tasks. In your final version, these should feed into your scheduler.")
 
+# Create long-lived objects once, then reuse them on every rerun. Streamlit
+# re-runs this whole script on each interaction, so we guard each instance with
+# an "is it already in the session?" check instead of rebuilding it every time.
+if "scheduler" not in st.session_state:
+    st.session_state.scheduler = Scheduler()  # stateless service; create once
+if "owner" not in st.session_state:
+    st.session_state.owner = Owner(name="Jordan")
+if "pet" not in st.session_state:
+    st.session_state.pet = Pet(name="Mochi")
 if "tasks" not in st.session_state:
-    st.session_state.tasks = []
+    st.session_state.tasks = []  # holds Task objects
+
+# Keep the guarded owner/pet in sync with the current input fields (update in
+# place rather than re-creating, so they stay the same session objects).
+st.session_state.owner.name = owner_name
+st.session_state.pet.name = pet_name
+st.session_state.pet.species = species
 
 col1, col2, col3 = st.columns(3)
 with col1:
@@ -59,12 +76,23 @@ with col3:
 
 if st.button("Add task"):
     st.session_state.tasks.append(
-        {"title": task_title, "duration_minutes": int(duration), "priority": priority}
+        Task(title=task_title, duration_minutes=int(duration), priority=priority)
     )
 
 if st.session_state.tasks:
     st.write("Current tasks:")
-    st.table(st.session_state.tasks)
+    # Tasks are stored as Task objects; convert to rows only for display.
+    st.table(
+        [
+            {
+                "title": t.title,
+                "duration_minutes": t.duration_minutes,
+                "priority": t.priority,
+                "status": t.status,
+            }
+            for t in st.session_state.tasks
+        ]
+    )
 else:
     st.info("No tasks yet. Add one above.")
 
