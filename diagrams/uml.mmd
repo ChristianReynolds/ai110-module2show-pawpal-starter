@@ -1,15 +1,49 @@
 classDiagram
-    %% Replace the placeholders below with your actual classes, attributes, methods, and relationships.
-    %% Keep this file updated so it matches your final implementation.
+    %% PawPal+ core class design.
+    %% Owner<->Pet relationship is held by DailyPlan (no Pet.owner back-pointer).
 
-    class ClassName {
-        +type attribute
-        +method() returnType
+    class Owner {
+        +str name
+        +int available_minutes
+        +str day_start
+        +list~str~ preferred_order
     }
 
-    class AnotherClass {
-        +type attribute
-        +method() returnType
+    class Pet {
+        +str name
+        +str species 
+        +int age_years
     }
 
-    ClassName --> AnotherClass : relationship
+    class Task {
+        +str title
+        +int duration_minutes
+        +str priority
+        +priority_rank() int
+    }
+
+    class ScheduledTask {
+        +Task task
+        +str start_time
+        +str end_time
+        +str reason
+    }
+
+    class Scheduler {
+        +build_plan(owner, pet, tasks) DailyPlan
+    }
+
+    class DailyPlan {
+        +Owner owner
+        +Pet pet
+        +list~ScheduledTask~ scheduled
+        +list skipped
+        +int total_minutes_used
+        +summary() str
+    }
+
+    Scheduler ..> DailyPlan : creates
+    DailyPlan o-- ScheduledTask : contains
+    ScheduledTask --> Task : wraps
+    DailyPlan --> Owner : for
+    DailyPlan --> Pet : for

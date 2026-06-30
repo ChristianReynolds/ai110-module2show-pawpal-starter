@@ -1,11 +1,27 @@
 # PawPal+ Project Reflection
 
+You are building **PawPal+**, a Streamlit app that helps a pet owner plan care tasks for their pet.
+
+## Scenario
+
+A busy pet owner needs help staying consistent with pet care. They want an assistant that can:
+
+- Track pet care tasks (walks, feeding, meds, enrichment, grooming, etc.)
+- Consider constraints (time available, priority, owner preferences)
+- Produce a daily plan and explain why it chose that plan
+
 ## 1. System Design
 
 **a. Initial design**
 
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
+Owner, Pet, Tasks
+- Let a user enter basic owner + pet info
+- Let a user add/edit tasks (duration + priority at minimum)
+- Generate a daily schedule/plan based on constraints and priorities
+- Display the plan clearly (and ideally explain the reasoning)
+- Include tests for the most important scheduling behaviors
 
 **b. Design changes**
 
@@ -19,6 +35,7 @@
 **a. Constraints and priorities**
 
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
+--> time and preferences of the owner, priority needs of the pet.
 - How did you decide which constraints mattered most?
 
 **b. Tradeoffs**

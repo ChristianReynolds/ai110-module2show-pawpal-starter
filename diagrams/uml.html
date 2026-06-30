@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PawPal+ — Class Diagram</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; color: #222; }
+    h1 { font-size: 1.4rem; }
+    .legend { margin: 1rem 0; font-size: .9rem; }
+    .legend span { display: inline-block; padding: .2rem .6rem; border-radius: .4rem; margin-right: .5rem; }
+    .entity { background: #dbeafe; }
+    .subentity { background: #fef3c7; }
+    .service { background: #dcfce7; }
+    .result { background: #ede9fe; }
+    .diagram { border: 1px solid #e5e7eb; border-radius: .6rem; padding: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>🐾 PawPal+ — Core Class Diagram</h1>
+
+  <div class="legend">
+    <span class="entity">Entity</span>
+    <span class="result">Aggregate / result</span>
+    <span class="subentity">Sub-entity (association object)</span>
+    <span class="service">Service (action)</span>
+  </div>
+
+  <div class="diagram">
+    <pre class="mermaid">
+classDiagram
+    %% PawPal+ core class design.
+    %% Owner<->Pet relationship is held by DailyPlan (no Pet.owner back-pointer).
+
+    class Owner {
+        +str name
+        +int available_minutes
+        +str day_start
+        +list~str~ preferred_order
+    }
+
+    class Pet {
+        +str name
+        +str species
+        +int age_years
+    }
+
+    class Task {
+        +str title
+        +int duration_minutes
+        +str priority
+        +priority_rank() int
+    }
+
+    class ScheduledTask {
+        +Task task
+        +str start_time
+        +str end_time
+        +str reason
+    }
+
+    class Scheduler {
+        +build_plan(owner, pet, tasks) DailyPlan
+    }
+
+    class DailyPlan {
+        +Owner owner
+        +Pet pet
+        +list~ScheduledTask~ scheduled
+        +list skipped
+        +int total_minutes_used
+        +summary() str
+    }
+
+    Scheduler ..> DailyPlan : creates
+    DailyPlan o-- ScheduledTask : contains
+    ScheduledTask --> Task : wraps
+    DailyPlan --> Owner : for
+    DailyPlan --> Pet : for
+
+    %% color-code by role
+    cssClass "Owner,Pet,Task" entity
+    cssClass "DailyPlan" result
+    cssClass "ScheduledTask" subentity
+    cssClass "Scheduler" service
+    </pre>
+  </div>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "default" });
+  </script>
+
+  <style>
+    /* role colors applied to the rendered class boxes */
+    .entity > rect, .entity path { fill: #dbeafe !important; }
+    .result > rect, .result path { fill: #ede9fe !important; }
+    .subentity > rect, .subentity path { fill: #fef3c7 !important; }
+    .service > rect, .service path { fill: #dcfce7 !important; }
+  </style>
+</body>
+</html>
