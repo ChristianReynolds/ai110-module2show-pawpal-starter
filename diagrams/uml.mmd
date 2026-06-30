@@ -11,9 +11,10 @@ classDiagram
 
     class Pet {
         +str name
-        +str species 
+        +str species
         +int age_years
     }
+    note for Pet "Per-pet care needs (meds, grooming) would attach here as care_needs:list~Task~. Today tasks are a separate input to build_plan; the caller decides which apply. Per-pet variability lives on Pet; per-activity attributes (duration, priority) live on Task."
 
     class Task {
         +str title
